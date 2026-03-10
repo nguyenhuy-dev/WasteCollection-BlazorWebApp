@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WasteCollection.BlazorWebApp.HuyNQ/WasteCollection.BlazorWebApp.HuyNQ.csproj" />
+  <Project Path="WasteCollection.Entities.HuyNQ/WasteCollection.Entities.HuyNQ.csproj" />
+  <Project Path="WasteCollection.Repositories.HuyNQ/WasteCollection.Repositories.HuyNQ.csproj" />
+  <Project Path="WasteCollection.Services.HuyNQ/WasteCollection.Services.HuyNQ.csproj" />
+</Solution>

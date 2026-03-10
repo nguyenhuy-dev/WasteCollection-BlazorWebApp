@@ -1,0 +1,87 @@
+﻿@page "/collectorassignmentshuynqs/delete"
+@using Microsoft.EntityFrameworkCore
+@using WasteCollection.Entities.HuyNQ.Models
+@inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>CollectorAssignmentsHuyNq</h2>
+    <hr />
+    @if (collectorassignmentshuynq is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ReportHuyNqid</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ReportHuyNqid</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">AssignedDate</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.AssignedDate</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.Status</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ArrivalTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ArrivalTime</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CompletionTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.CompletionTime</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CollectedWeight</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.CollectedWeight</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ProofImageUrl</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ProofImageUrl</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EstimatedArrivalTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.EstimatedArrivalTime</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Notes</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.Notes</dd>
+        </dl>
+        <EditForm method="post" Model="collectorassignmentshuynq" OnValidSubmit="DeleteCollectorAssignmentsHuyNq" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(collectorassignmentshuynq is null)">Delete</button> |
+            <a href="/collectorassignmentshuynqs">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private CollectorAssignmentsHuyNq? collectorassignmentshuynq;
+
+    [SupplyParameterFromQuery]
+    private Guid AssignmentId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        collectorassignmentshuynq = await context.CollectorAssignmentsHuyNqs.FirstOrDefaultAsync(m => m.AssignmentId == AssignmentId);
+
+        if (collectorassignmentshuynq is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+
+    private async Task DeleteCollectorAssignmentsHuyNq()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.CollectorAssignmentsHuyNqs.Remove(collectorassignmentshuynq!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/collectorassignmentshuynqs");
+    }
+}

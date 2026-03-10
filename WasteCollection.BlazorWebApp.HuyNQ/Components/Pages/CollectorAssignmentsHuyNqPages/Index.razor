@@ -1,0 +1,60 @@
+﻿@page "/collectorassignmentshuynqs"
+@* @using Microsoft.EntityFrameworkCore *@
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WasteCollection.Entities.HuyNQ.Models
+@using WasteCollection.Services.HuyNQ
+@using WasteCollection.Services.HuyNQ.DTOs
+@* @implements IAsyncDisposable *@
+@* @inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory *@
+@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsHuyNqService
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="collectorassignmentshuynqs/create">Create New</a>
+</p>
+
+@if (!CollectorAssignmentsHuyNqs.Any())
+{
+    <p><em>No records found.</em></p>
+}
+else
+{
+    <QuickGrid Class="table" Items="CollectorAssignmentsHuyNqs.AsQueryable()">
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.AssignedDate" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.Status" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.ArrivalTime" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.CompletionTime" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.CollectedWeight" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.ProofImageUrl" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.EstimatedArrivalTime" />
+        <PropertyColumn Property="collectorassignmentshuynq => collectorassignmentshuynq.Notes" />
+
+        <TemplateColumn Context="collectorassignmentshuynq">
+            <a href="@($"collectorassignmentshuynqs/edit?assignmentid={collectorassignmentshuynq.AssignmentId}")">Edit</a> |
+            <a href="@($"collectorassignmentshuynqs/details?assignmentid={collectorassignmentshuynq.AssignmentId}")">Details</a> |
+            <a href="@($"collectorassignmentshuynqs/delete?assignmentid={collectorassignmentshuynq.AssignmentId}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    // private WasteCollectionDbContext context = default!;
+    private List<CollectorAssignmentsHuyNqGetAllDto> CollectorAssignmentsHuyNqs { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // context = DbFactory.CreateDbContext();
+        try {
+            CollectorAssignmentsHuyNqs = await CollectorAssignmentsHuyNqService.GetAllAsync();
+        }
+        catch (Exception ex) {
+            throw new Exception(ex.Message);
+        }
+        
+    }
+
+    // public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

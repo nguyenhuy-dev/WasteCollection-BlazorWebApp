@@ -1,0 +1,62 @@
+﻿@page "/collectorassignmentshuynqs/details"
+@using Microsoft.EntityFrameworkCore
+@using WasteCollection.Entities.HuyNQ.Models
+@inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>CollectorAssignmentsHuyNq</h2>
+    <hr />
+    @if (collectorassignmentshuynq is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ReportHuyNqid</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ReportHuyNqid</dd>
+            <dt class="col-sm-2">AssignedDate</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.AssignedDate</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.Status</dd>
+            <dt class="col-sm-2">ArrivalTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ArrivalTime</dd>
+            <dt class="col-sm-2">CompletionTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.CompletionTime</dd>
+            <dt class="col-sm-2">CollectedWeight</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.CollectedWeight</dd>
+            <dt class="col-sm-2">ProofImageUrl</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.ProofImageUrl</dd>
+            <dt class="col-sm-2">EstimatedArrivalTime</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.EstimatedArrivalTime</dd>
+            <dt class="col-sm-2">Notes</dt>
+            <dd class="col-sm-10">@collectorassignmentshuynq.Notes</dd>
+        </dl>
+        <div>
+            <a href="@($"/collectorassignmentshuynqs/edit?assignmentid={collectorassignmentshuynq.AssignmentId}")">Edit</a> |
+            <a href="@($"/collectorassignmentshuynqs")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private CollectorAssignmentsHuyNq? collectorassignmentshuynq;
+
+    [SupplyParameterFromQuery]
+    private Guid AssignmentId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        collectorassignmentshuynq = await context.CollectorAssignmentsHuyNqs.FirstOrDefaultAsync(m => m.AssignmentId == AssignmentId);
+
+        if (collectorassignmentshuynq is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+}
