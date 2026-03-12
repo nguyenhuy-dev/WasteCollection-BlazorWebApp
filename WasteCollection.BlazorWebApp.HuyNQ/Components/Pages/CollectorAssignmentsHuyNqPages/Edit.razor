@@ -1,8 +1,11 @@
 ﻿@page "/collectorassignmentshuynqs/edit"
-@using Microsoft.EntityFrameworkCore
+@using AutoMapper
 @using WasteCollection.Entities.HuyNQ.Models
-@inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@using WasteCollection.Services.HuyNQ.DTOs
+@using WasteCollection.Services.HuyNQ
+@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsHuyNqService
+@inject IMapper Mapper
 
 <PageTitle>Edit</PageTitle>
 
@@ -23,9 +26,12 @@ else
                 <ValidationSummary role="alert"/>
                 <input type="hidden" name="CollectorAssignmentsHuyNq.AssignmentId" value="@CollectorAssignmentsHuyNq.AssignmentId" />
                 <div class="mb-3">
-                    <label for="reporthuynqid" class="form-label">ReportHuyNqid:</label>
-                    <InputText id="reporthuynqid" @bind-Value="ReportHuyNqidString" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.ReportHuyNqid" class="text-danger" />
+                    <label for="reporthuynqid" class="form-label">ReportHuyNqId (Guid):</label>
+                    <input type="text" id="reporthuynqid"
+                           name="CollectorAssignmentsHuyNq.ReportHuyNqId"
+                           @bind="CollectorAssignmentsHuyNq.ReportHuyNqId"
+                           class="form-control" />
+                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.ReportHuyNqId" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="assigneddate" class="form-label">AssignedDate:</label>
@@ -82,36 +88,22 @@ else
     private Guid AssignmentId { get; set; }
 
     [SupplyParameterFromForm]
-    private CollectorAssignmentsHuyNq? CollectorAssignmentsHuyNq { get; set; }
-
-    private string? ReportHuyNqidString {
-        get => CollectorAssignmentsHuyNq.ReportHuyNqid.ToString();
-        set 
-        {
-            if (Guid.TryParse(value, out Guid reportId)) 
-                CollectorAssignmentsHuyNq.ReportHuyNqid = reportId;
-        }
-    }
+    private CollectorAssignmentsHuyNqUpdatedDto? CollectorAssignmentsHuyNq { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        // using var context = DbFactory.CreateDbContext();
-        // CollectorAssignmentsHuyNq ??= await context.CollectorAssignmentsHuyNqs.FirstOrDefaultAsync(m => m.AssignmentId == AssignmentId);
+        var collectorAssignmentsHuyNq = await CollectorAssignmentsHuyNqService.GetByIdAsync(AssignmentId);
+        CollectorAssignmentsHuyNq ??= Mapper.Map<CollectorAssignmentsHuyNqGetDto, CollectorAssignmentsHuyNqUpdatedDto>(collectorAssignmentsHuyNq);
 
-        // if (CollectorAssignmentsHuyNq is null)
-        //    NavigationManager.NotFound();
+        if (CollectorAssignmentsHuyNq is null)
+            NavigationManager.NotFound();
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateCollectorAssignmentsHuyNq()
     {
+        await CollectorAssignmentsHuyNqService.UpdateAsync(CollectorAssignmentsHuyNq!);
         NavigationManager.NavigateTo("/collectorassignmentshuynqs");
-    }
-
-    private bool CollectorAssignmentsHuyNqExists(Guid assignmentid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.CollectorAssignmentsHuyNqs.Any(e => e.AssignmentId == assignmentid);
     }
 }

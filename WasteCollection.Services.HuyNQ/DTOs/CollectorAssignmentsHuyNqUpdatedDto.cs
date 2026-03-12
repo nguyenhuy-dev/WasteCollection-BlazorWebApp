@@ -4,7 +4,7 @@ public class CollectorAssignmentsHuyNqUpdatedDto
 {
     public Guid AssignmentId { get; set; }
 
-    public Guid ReportHuyNqid { get; set; }
+    public Guid ReportHuyNqId { get; set; }
 
     public DateTime? AssignedDate { get; set; }
 

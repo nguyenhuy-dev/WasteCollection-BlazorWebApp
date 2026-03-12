@@ -1,5 +1,4 @@
 ﻿using WasteCollection.BlazorWebApp.HuyNQ.Components;
-using Microsoft.EntityFrameworkCore;
 using WasteCollection.Services.HuyNQ;
 
 var builder = WebApplication.CreateBuilder(args);

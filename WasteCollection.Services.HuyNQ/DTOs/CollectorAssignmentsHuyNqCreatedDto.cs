@@ -4,9 +4,9 @@ public class CollectorAssignmentsHuyNqCreatedDto
 {
     public Guid AssignmentId { get; set; } = Guid.CreateVersion7();
 
-    public Guid ReportHuyNqid { get; set; }
+    public Guid ReportHuyNqId { get; set; }
 
-    public DateTime? AssignedDate { get; set; } = DateTime.Now;
+    public DateTime AssignedDate { get; set; } = DateTime.Now;
 
     public string Status { get; set; } = default!;
 
@@ -21,4 +21,10 @@ public class CollectorAssignmentsHuyNqCreatedDto
     public DateTime? EstimatedArrivalTime { get; set; }
 
     public string Notes { get; set; } = default!;
+
+    public CollectorAssignmentsHuyNqCreatedDto()
+    {
+        AssignmentId = Guid.CreateVersion7();
+        AssignedDate = DateTime.Now;
+    }
 }

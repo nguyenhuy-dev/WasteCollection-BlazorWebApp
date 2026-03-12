@@ -1,8 +1,8 @@
 ﻿@page "/collectorassignmentshuynqs/delete"
-@using Microsoft.EntityFrameworkCore
-@using WasteCollection.Entities.HuyNQ.Models
-@inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@using WasteCollection.Services.HuyNQ;
+@using WasteCollection.Services.HuyNQ.DTOs;
+@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsHuyNqService
 
 <PageTitle>Delete</PageTitle>
 
@@ -61,15 +61,14 @@
 </div>
 
 @code {
-    private CollectorAssignmentsHuyNq? collectorassignmentshuynq;
+    private CollectorAssignmentsHuyNqGetDto? collectorassignmentshuynq;
 
     [SupplyParameterFromQuery]
     private Guid AssignmentId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        collectorassignmentshuynq = await context.CollectorAssignmentsHuyNqs.FirstOrDefaultAsync(m => m.AssignmentId == AssignmentId);
+        collectorassignmentshuynq ??= await CollectorAssignmentsHuyNqService.GetByIdAsync(AssignmentId);
 
         if (collectorassignmentshuynq is null)
         {
@@ -79,9 +78,7 @@
 
     private async Task DeleteCollectorAssignmentsHuyNq()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.CollectorAssignmentsHuyNqs.Remove(collectorassignmentshuynq!);
-        await context.SaveChangesAsync();
+        await CollectorAssignmentsHuyNqService.DeleteAsync(AssignmentId);
         NavigationManager.NavigateTo("/collectorassignmentshuynqs");
     }
 }
