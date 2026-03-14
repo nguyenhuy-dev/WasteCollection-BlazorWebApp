@@ -4,7 +4,7 @@ public class CollectorAssignmentsHuyNqCreatedDto
 {
     public Guid AssignmentId { get; set; } = Guid.CreateVersion7();
 
-    public Guid ReportHuyNqId { get; set; }
+    public Guid ReportHuyNqid { get; set; }
 
     public DateTime AssignedDate { get; set; } = DateTime.Now;
 

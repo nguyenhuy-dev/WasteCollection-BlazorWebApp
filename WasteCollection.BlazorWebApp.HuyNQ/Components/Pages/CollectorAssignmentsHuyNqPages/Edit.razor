@@ -1,86 +1,135 @@
-﻿@page "/collectorassignmentshuynqs/edit"
-@using AutoMapper
+@page "/collectorassignmentshuynqs/edit"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
 @using WasteCollection.Entities.HuyNQ.Models
-@inject NavigationManager NavigationManager
-@using WasteCollection.Services.HuyNQ.DTOs
 @using WasteCollection.Services.HuyNQ
-@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsHuyNqService
+@using WasteCollection.Services.HuyNQ.DTOs
+@using AutoMapper
+@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsService
+@inject ReportsHuyNqService ReportsService
+@inject NavigationManager NavigationManager
 @inject IMapper Mapper
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Assignment | Smart Waste Platform</PageTitle>
 
-<h1>Edit</h1>
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-xl rounded-4 overflow-hidden">
+            <!-- Decorative Header -->
+            <div class="bg-light p-4 border-bottom border-light">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="/collectorassignmentshuynqs" class="btn btn-sm btn-white rounded-circle shadow-xs me-3 d-flex justify-content-center align-items-center hover-lift" style="width: 36px; height: 36px; color: var(--color-text-muted);">
+                        <span class="bi bi-arrow-left"></span>
+                    </a>
+                    <div>
+                        <h3 class="fw-bold mb-0" style="color: var(--color-text-main); font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">Edit Assignment</h3>
+                        <span class="text-muted" style="font-size: 0.85rem;">Update details or change collector status</span>
+                    </div>
+                </div>
+            </div>
 
-<h2>CollectorAssignmentsHuyNq</h2>
-<hr />
-@if (CollectorAssignmentsHuyNq is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="CollectorAssignmentsHuyNq" OnValidSubmit="UpdateCollectorAssignmentsHuyNq" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="CollectorAssignmentsHuyNq.AssignmentId" value="@CollectorAssignmentsHuyNq.AssignmentId" />
-                <div class="mb-3">
-                    <label for="reporthuynqid" class="form-label">ReportHuyNqId (Guid):</label>
-                    <input type="text" id="reporthuynqid"
-                           name="CollectorAssignmentsHuyNq.ReportHuyNqId"
-                           @bind="CollectorAssignmentsHuyNq.ReportHuyNqId"
-                           class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.ReportHuyNqId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="assigneddate" class="form-label">AssignedDate:</label>
-                    <InputDate id="assigneddate" @bind-Value="CollectorAssignmentsHuyNq.AssignedDate" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.AssignedDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status:</label>
-                    <InputText id="status" @bind-Value="CollectorAssignmentsHuyNq.Status" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.Status" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="arrivaltime" class="form-label">ArrivalTime:</label>
-                    <InputDate id="arrivaltime" @bind-Value="CollectorAssignmentsHuyNq.ArrivalTime" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.ArrivalTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="completiontime" class="form-label">CompletionTime:</label>
-                    <InputDate id="completiontime" @bind-Value="CollectorAssignmentsHuyNq.CompletionTime" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.CompletionTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="collectedweight" class="form-label">CollectedWeight:</label>
-                    <InputNumber id="collectedweight" @bind-Value="CollectorAssignmentsHuyNq.CollectedWeight" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.CollectedWeight" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="proofimageurl" class="form-label">ProofImageUrl:</label>
-                    <InputText id="proofimageurl" @bind-Value="CollectorAssignmentsHuyNq.ProofImageUrl" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.ProofImageUrl" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="estimatedarrivaltime" class="form-label">EstimatedArrivalTime:</label>
-                    <InputDate id="estimatedarrivaltime" @bind-Value="CollectorAssignmentsHuyNq.EstimatedArrivalTime" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.EstimatedArrivalTime" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="notes" class="form-label">Notes:</label>
-                    <InputText id="notes" @bind-Value="CollectorAssignmentsHuyNq.Notes" class="form-control" />
-                    <ValidationMessage For="() => CollectorAssignmentsHuyNq.Notes" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+            <!-- Form Body -->
+            <div class="card-body p-4 p-md-5 bg-white">
+                @if (CollectorAssignmentsHuyNq is null)
+                {
+                    <div class="d-flex justify-content-center flex-column align-items-center p-5">
+                        <div class="spinner-border text-primary shadow-sm mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <span class="fw-semibold text-muted">Retrieving Data...</span>
+                    </div>
+                }
+                else
+                {
+                    <EditForm method="post" Model="CollectorAssignmentsHuyNq" OnValidSubmit="UpdateCollectorAssignmentsHuyNq" FormName="edit" Enhance>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="alert alert-danger mb-4 shadow-sm border-0 rounded-3 text-sm" />
+
+                        <div class="mb-4">
+                            <label for="reporthuynqid" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Report Address (Destination)</label>
+                            <InputSelect id="reporthuynqid" @bind-Value="CollectorAssignmentsHuyNq.ReportHuyNqId" class="form-select border shadow-xs py-3">
+                                <option value="">-- Select Report Address --</option>
+                                @if (availableReports != null)
+                                {
+                                    @foreach (var report in availableReports)
+                                    {
+                                        <option value="@report.ReportId">@report.Address (@report.ReportDate?.ToString("MMM dd, yyyy"))</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => CollectorAssignmentsHuyNq.ReportHuyNqId" class="validation-message" />
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label for="assigneddate" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Assigned Date</label>
+                                <InputDate id="assigneddate" @bind-Value="CollectorAssignmentsHuyNq.AssignedDate" class="form-control border shadow-xs py-3" readonly/>
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.AssignedDate" class="validation-message" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Collection Status</label>
+                                <InputSelect id="status" @bind-Value="CollectorAssignmentsHuyNq.Status" class="form-select border shadow-xs py-3">
+                                    <option value="Assigned">Assigned</option>
+                                    <option value="OnTheWay">On The Way</option>
+                                    <option value="Collected">Collected</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </InputSelect>
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.Status" class="validation-message" />
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label for="estimatedarrivaltime" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Est. Arrival Time</label>
+                                <InputDate id="estimatedarrivaltime" @bind-Value="CollectorAssignmentsHuyNq.EstimatedArrivalTime" class="form-control border shadow-xs py-3" />
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.EstimatedArrivalTime" class="validation-message" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="collectedweight" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Final Vol. (kg)</label>
+                                <InputNumber id="collectedweight" @bind-Value="CollectorAssignmentsHuyNq.CollectedWeight" class="form-control border shadow-xs py-3" placeholder="0.00" />
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.CollectedWeight" class="validation-message" />
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label for="arrivaltime" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Actual Arrival Time</label>
+                                <InputDate id="arrivaltime" @bind-Value="CollectorAssignmentsHuyNq.ArrivalTime" class="form-control border shadow-xs py-3" />
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.ArrivalTime" class="validation-message" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="completiontime" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Completion Time</label>
+                                <InputDate id="completiontime" @bind-Value="CollectorAssignmentsHuyNq.CompletionTime" class="form-control border shadow-xs py-3" />
+                                <ValidationMessage For="() => CollectorAssignmentsHuyNq.CompletionTime" class="validation-message" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="proofimageurl" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Proof Image URL</label>
+                            <div class="input-group shadow-xs">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-link-45deg text-muted"></i></span>
+                                <InputText id="proofimageurl" @bind-Value="CollectorAssignmentsHuyNq.ProofImageUrl" class="form-control border-start-0 py-3 ps-0" placeholder="https://..." />
+                            </div>
+                            <ValidationMessage For="() => CollectorAssignmentsHuyNq.ProofImageUrl" class="validation-message" />
+                        </div>
+
+                        <div class="mb-5">
+                            <label for="notes" class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Additional Notes</label>
+                            <InputTextArea id="notes" @bind-Value="CollectorAssignmentsHuyNq.Notes" class="form-control border shadow-xs py-3" rows="3" placeholder="Routing details, hazards, etc..." />
+                            <ValidationMessage For="() => CollectorAssignmentsHuyNq.Notes" class="validation-message" />
+                        </div>
+
+                        <div class="d-flex flex-column-reverse flex-sm-row justify-content-end gap-3 pt-4 border-top border-light">
+                            <a href="/collectorassignmentshuynqs" class="btn btn-outline-secondary px-4 py-2 fw-bold text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.05em;">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5 py-2 shadow-md hover-lift fw-bold text-uppercase d-flex align-items-center gap-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                                Save Changes <span class="bi bi-check2"></span>
+                            </button>
+                        </div>
+                    </EditForm>
+                }
+            </div>
         </div>
     </div>
-}
-
-<div>
-    <a href="/collectorassignmentshuynqs">Back to List</a>
 </div>
 
 @code {
@@ -90,20 +139,31 @@ else
     [SupplyParameterFromForm]
     private CollectorAssignmentsHuyNqUpdatedDto? CollectorAssignmentsHuyNq { get; set; }
 
+    private List<ReportsHuyNq>? availableReports;
+
     protected override async Task OnInitializedAsync()
     {
-        var collectorAssignmentsHuyNq = await CollectorAssignmentsHuyNqService.GetByIdAsync(AssignmentId);
-        CollectorAssignmentsHuyNq ??= Mapper.Map<CollectorAssignmentsHuyNqGetDto, CollectorAssignmentsHuyNqUpdatedDto>(collectorAssignmentsHuyNq);
-
-        if (CollectorAssignmentsHuyNq is null)
+        availableReports = await ReportsService.GetAllAsync();
+        
+        var existingDto = await CollectorAssignmentsService.GetByIdAsync(AssignmentId);
+        if (existingDto is null)
+        {
             NavigationManager.NotFound();
+        }
+        else
+        {
+            // Map the GetDto to UpdatedDto 
+            CollectorAssignmentsHuyNq ??= Mapper.Map<CollectorAssignmentsHuyNqGetDto, CollectorAssignmentsHuyNqUpdatedDto>(existingDto);
+            CollectorAssignmentsHuyNq.AssignmentId = AssignmentId; // ensure ID is preserved
+        }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateCollectorAssignmentsHuyNq()
     {
-        await CollectorAssignmentsHuyNqService.UpdateAsync(CollectorAssignmentsHuyNq!);
-        NavigationManager.NavigateTo("/collectorassignmentshuynqs");
+        if (CollectorAssignmentsHuyNq != null)
+        {
+            await CollectorAssignmentsService.UpdateAsync(CollectorAssignmentsHuyNq);
+            NavigationManager.NavigateTo("/collectorassignmentshuynqs");
+        }
     }
 }

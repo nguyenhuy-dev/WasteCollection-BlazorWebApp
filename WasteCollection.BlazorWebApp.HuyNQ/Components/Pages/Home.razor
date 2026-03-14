@@ -1,7 +1,128 @@
-﻿@page "/"
+@page "/"
+@inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Smart Waste Collection | Platform Core</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="landing-page position-relative w-100 overflow-hidden rounded-4">
+    <!-- Animated Gradient Background underlay -->
+    <div class="ambient-background"></div>
 
-Welcome to your new app.
+    <div class="container position-relative z-2 py-5 my-md-5">
+        <div class="row align-items-center mb-5 pb-4">
+            <div class="col-lg-7 text-center text-lg-start mb-5 mb-lg-0 hero-text-section">
+                <div class="badge rounded-pill px-3 py-2 mb-4 animate-fade-in-up" style="background: var(--color-primary-subtle); color: var(--color-primary-hover); font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <span class="bi bi-stars me-1"></span> Next-Gen Platform v3.0
+                </div>
+                <h1 class="display-3 fw-bold mb-4 animate-fade-in-up" style="animation-delay: 0.1s; line-height: 1.1; font-family: 'Outfit', sans-serif; letter-spacing: -0.03em;">
+                    Intelligent <br />
+                    <span class="gradient-text">Waste Routing.</span>
+                </h1>
+                <p class="lead text-muted mb-5 fw-medium animate-fade-in-up" style="animation-delay: 0.2s; font-size: 1.25rem; max-width: 540px; margin-inline: auto lg-0;">
+                    A premium management dashboard designed for scale. Seamlessly coordinate fleets, assignments, and verified collections in real-time.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-lg d-flex align-items-center justify-content-center gap-2" @onclick='() => NavigationManager.NavigateTo("/login")'>
+                        Get Started <span class="bi bi-arrow-right"></span>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill d-flex align-items-center justify-content-center gap-2 bg-white" @onclick='() => NavigationManager.NavigateTo("/collectorassignmentshuynqs")'>
+                        <span class="bi bi-layers"></span> View Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-5 position-relative animate-fade-in-up" style="animation-delay: 0.4s;">
+                <!-- Decorative Abstract UI Elements mimicking React landing pages -->
+                <div class="decorative-card main-card glass-panel p-4 rounded-4 shadow-xl">
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-light">
+                        <div class="rounded-circle bg-success d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 48px; height: 48px;">
+                            <span class="bi bi-truck text-white fs-5"></span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Fleet Status</h6>
+                            <small class="text-success fw-semibold">98% Efficiency</small>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="skeleton-line w-100 rounded-pill"></div>
+                        <div class="skeleton-line w-75 rounded-pill"></div>
+                        <div class="skeleton-line w-50 rounded-pill"></div>
+                    </div>
+                </div>
+
+                <div class="decorative-card side-card glass-panel p-3 rounded-4 shadow-lg position-absolute bottom-0 start-0 translate-middle text-center">
+                    <span class="bi bi-check-circle-fill text-primary" style="font-size: 2rem;"></span>
+                    <div class="fw-bold mt-2" style="font-size: 0.85rem;">Synced</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .landing-page {
+        min-height: calc(100vh - 160px);
+        background-color: #f8fafc;
+    }
+
+    .ambient-background {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.1) 25%, rgba(248, 250, 252, 1) 50%);
+        animation: spin-slow 40s linear infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .decorative-card {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        transition: transform 0.3s ease;
+    }
+    
+    .decorative-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .main-card {
+        transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+        z-index: 3;
+    }
+    
+    .side-card {
+        transform: translateY(20px) translateX(-20px);
+        z-index: 4;
+        width: 100px;
+    }
+
+    .skeleton-line {
+        height: 12px;
+        background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+
+    @@keyframes spin-slow {
+        100% { transform: rotate(360deg); }
+    }
+
+    @@keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .animate-fade-in-up {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

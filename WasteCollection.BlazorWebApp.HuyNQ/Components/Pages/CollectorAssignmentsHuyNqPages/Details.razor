@@ -1,62 +1,141 @@
-﻿@page "/collectorassignmentshuynqs/details"
-@using Microsoft.EntityFrameworkCore
+@page "/collectorassignmentshuynqs/details"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @using WasteCollection.Entities.HuyNQ.Models
-@inject IDbContextFactory<WasteCollection.Entities.HuyNQ.Models.WasteCollectionDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@using WasteCollection.Services.HuyNQ
+@using WasteCollection.Services.HuyNQ.DTOs
+@inject ICollectorAssignmentsHuyNqService CollectorAssignmentsHuyNqService
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Assignment Details | Smart Waste Platform</PageTitle>
 
-<h1>Details</h1>
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-xl rounded-4 overflow-hidden">
+            <!-- Decorative Header -->
+            <div class="bg-light p-4 border-bottom border-light">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="/collectorassignmentshuynqs" class="btn btn-sm btn-white rounded-circle shadow-xs me-3 d-flex justify-content-center align-items-center hover-lift" style="width: 36px; height: 36px; color: var(--color-text-muted);">
+                        <span class="bi bi-arrow-left"></span>
+                    </a>
+                    <div>
+                        <h3 class="fw-bold mb-0" style="color: var(--color-text-main); font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">Assignment Details</h3>
+                        <span class="text-muted" style="font-size: 0.85rem;">Complete record view</span>
+                    </div>
+                </div>
+            </div>
 
-<div>
-    <h2>CollectorAssignmentsHuyNq</h2>
-    <hr />
-    @if (collectorassignmentshuynq is null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">ReportHuyNqid</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.ReportHuyNqid</dd>
-            <dt class="col-sm-2">AssignedDate</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.AssignedDate</dd>
-            <dt class="col-sm-2">Status</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.Status</dd>
-            <dt class="col-sm-2">ArrivalTime</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.ArrivalTime</dd>
-            <dt class="col-sm-2">CompletionTime</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.CompletionTime</dd>
-            <dt class="col-sm-2">CollectedWeight</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.CollectedWeight</dd>
-            <dt class="col-sm-2">ProofImageUrl</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.ProofImageUrl</dd>
-            <dt class="col-sm-2">EstimatedArrivalTime</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.EstimatedArrivalTime</dd>
-            <dt class="col-sm-2">Notes</dt>
-            <dd class="col-sm-10">@collectorassignmentshuynq.Notes</dd>
-        </dl>
-        <div>
-            <a href="@($"/collectorassignmentshuynqs/edit?assignmentid={collectorassignmentshuynq.AssignmentId}")">Edit</a> |
-            <a href="@($"/collectorassignmentshuynqs")">Back to List</a>
+            <!-- Details Body -->
+            <div class="card-body p-4 p-md-5 bg-white">
+                @if (collectorassignmentshuynq is null)
+                {
+                    <div class="d-flex justify-content-center flex-column align-items-center p-5">
+                        <div class="spinner-border text-primary shadow-sm mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <span class="fw-semibold text-muted">Retrieving Data...</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-4 mb-4">
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Report Address</h6>
+                            <p class="mb-0 fw-bold text-dark" style="font-size: 1.1rem;">@collectorassignmentshuynq.Address</p>
+                        </div>
+                        <div class="col-sm-6 d-flex align-items-end">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Current Status</h6>
+                                <p class="mb-0"><span class="badge px-3 py-2 rounded-pill fw-bold @GetStatusBadgeClass(collectorassignmentshuynq.Status)" style="font-size: 0.85rem;">@collectorassignmentshuynq.Status</span></p>
+                            </div>
+                        </div>
+
+                        <div class="col-12 py-3">
+                            <hr class="border-light m-0" />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Assigned Date</h6>
+                            <p class="mb-0 fw-medium text-dark">@(collectorassignmentshuynq.AssignedDate?.ToString("MMM dd, yyyy HH:mm") ?? "-")</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Estimated Arrival</h6>
+                            <p class="mb-0 fw-medium text-dark">@(collectorassignmentshuynq.EstimatedArrivalTime?.ToString("MMM dd, yyyy HH:mm") ?? "-")</p>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Actual Arrival</h6>
+                            <p class="mb-0 fw-medium text-dark">@(collectorassignmentshuynq.ArrivalTime?.ToString("MMM dd, yyyy HH:mm") ?? "-")</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Completion Time</h6>
+                            <p class="mb-0 fw-medium text-dark">@(collectorassignmentshuynq.CompletionTime?.ToString("MMM dd, yyyy HH:mm") ?? "-")</p>
+                        </div>
+
+                        <div class="col-12 py-3">
+                            <hr class="border-light m-0" />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Collected Weight</h6>
+                            <p class="mb-0 fw-bold text-success fs-5">@(collectorassignmentshuynq.CollectedWeight != null ? $"{collectorassignmentshuynq.CollectedWeight} kg" : "-")</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Proof Image</h6>
+                            @if (!string.IsNullOrEmpty(collectorassignmentshuynq.ProofImageUrl))
+                            {
+                                <a href="@collectorassignmentshuynq.ProofImageUrl" target="_blank" class="text-primary text-decoration-none fw-bold d-inline-flex align-items-center gap-1 hover-lift">
+                                    <span class="bi bi-image"></span> View Image <span class="bi bi-box-arrow-up-right small"></span>
+                                </a>
+                            }
+                            else
+                            {
+                                <p class="mb-0 text-muted fst-italic">No image provided</p>
+                            }
+                        </div>
+
+                        <div class="col-12 pt-2">
+                            <h6 class="text-muted mb-2 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Additional Notes</h6>
+                            <div class="p-4 bg-light rounded-4 border-0 shadow-xs">
+                                <p class="mb-0 text-dark fw-medium" style="line-height: 1.6;">@(string.IsNullOrEmpty(collectorassignmentshuynq.Notes) ? "No additional notes were recorded for this assignment." : collectorassignmentshuynq.Notes)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-4 border-top border-light mt-4">
+                        <a href="@($"/collectorassignmentshuynqs/edit?assignmentid={collectorassignmentshuynq.AssignmentId}")" class="btn btn-primary px-5 py-2 shadow-md hover-lift fw-bold text-uppercase d-flex align-items-center gap-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                            <span class="bi bi-pencil"></span> Edit Record
+                        </a>
+                    </div>
+                }
+            </div>
         </div>
-    }
+    </div>
 </div>
 
 @code {
-    private CollectorAssignmentsHuyNq? collectorassignmentshuynq;
+    private CollectorAssignmentsHuyNqGetDto? collectorassignmentshuynq;
 
     [SupplyParameterFromQuery]
     private Guid AssignmentId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        collectorassignmentshuynq = await context.CollectorAssignmentsHuyNqs.FirstOrDefaultAsync(m => m.AssignmentId == AssignmentId);
+        collectorassignmentshuynq = await CollectorAssignmentsHuyNqService.GetByIdAsync(AssignmentId);
 
         if (collectorassignmentshuynq is null)
         {
             NavigationManager.NotFound();
         }
+    }
+
+    private string GetStatusBadgeClass(string? status)
+    {
+        return status switch
+        {
+            "Assigned" => "bg-light text-primary border border-secondary border-opacity-25",
+            "OnTheWay" => "bg-warning-subtle text-warning-emphasis border border-warning",
+            "Collected" => "bg-success-subtle text-success border border-success",
+            "Cancelled" => "bg-danger-subtle text-danger border border-danger",
+            _ => "bg-light text-secondary border border-secondary"
+        };
     }
 }

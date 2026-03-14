@@ -2,12 +2,30 @@
 using WasteCollection.Services.HuyNQ;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<ICollectorAssignmentsHuyNqService, CollectorAssignmentsHuyNqService>();
+builder.Services.AddScoped<ReportsHuyNqService>();
+builder.Services.AddScoped<SystemUserAccountService>();
+
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", opts =>
+    {
+        long expireTime = long.Parse(configuration["Authentication:CookieAuthTTL"] ?? throw new InvalidDataException("Invalid Authentication:CookieAuthTTL variable environment."));
+        opts.ExpireTimeSpan = TimeSpan.FromMilliseconds(expireTime);
+        opts.SlidingExpiration = true;
+        opts.LoginPath = "/login";
+        opts.AccessDeniedPath = "/login";
+    });
+builder.Services.AddAuthorization();
+
+builder.Services.AddHttpContextAccessor();
+
+// builder.Services.AddAntiforgery();
 
 var assemblyService = typeof(IAssemblyReference).Assembly;
 // Add AutoMapper profiles
@@ -25,6 +43,9 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 

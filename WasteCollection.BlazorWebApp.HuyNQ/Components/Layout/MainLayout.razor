@@ -1,23 +1,95 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthStateProvider
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="page d-flex min-vh-100" style="background-color: var(--color-background);">
+    <!-- Floating Island Sidebar -->
+    <div class="sidebar-wrapper d-none d-md-block p-4 pe-0" style="width: 280px; z-index: 10;">
+        <div class="sidebar-island h-100 rounded-4 shadow-lg overflow-hidden glass-panel d-flex flex-column">
+            <NavMenu />
+        </div>
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <!-- Mobile Header (Visible only on small screens) -->
+    <div class="d-md-none bg-white shadow-sm p-3 d-flex justify-content-between align-items-center position-sticky top-0 z-3">
+        <a class="navbar-brand fw-bold mb-0 text-primary d-flex align-items-center" href="">
+            <span class="bi bi-recycle fs-4 me-2"></span> Smart Waste
+        </a>
+        <button class="btn btn-light rounded-circle" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false" aria-controls="mobileNav">
+            <span class="bi bi-list fs-4"></span>
+        </button>
+    </div>
 
-        <article class="content px-4">
-            @Body
+    <!-- Mobile Nav Collapse -->
+    <div class="collapse d-md-none bg-white shadow-sm position-absolute w-100 z-3" id="mobileNav" style="top: 70px;">
+        <div class="p-3">
+            <NavMenu />
+        </div>
+    </div>
+
+    <main class="flex-grow-1 d-flex flex-column h-100 position-relative">
+        <!-- Frosted Glass Top Row -->
+        <header class="top-row px-4 px-md-5 d-flex justify-content-end align-items-center position-sticky top-0 z-2" style="height: 80px; background: rgba(241, 245, 249, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.6);">
+            <AuthorizeView>
+                <Authorized>
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold" style="font-size:0.9rem;color:var(--color-text-main);">
+                                @UserName
+                            </div>
+
+                            <div class="text-muted" style="font-size:0.75rem;">
+                                @Role
+                            </div>
+                        </div>
+
+                        <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center fw-bold shadow-sm"
+                             style="width:40px;height:40px;">
+                            @Initial
+                        </div>
+
+                    </div>
+
+                </Authorized>
+            </AuthorizeView>
+        </header>
+
+        <!-- Main Content Area -->
+        <article class="content px-3 px-md-5 py-4 py-md-5 flex-grow-1 overflow-auto">
+            <div class="mx-auto" style="max-width: 1200px;">
+                @Body
+            </div>
         </article>
     </main>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
+    <a href="." class="reload text-success">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+
+    private string UserName = default!;
+    private string Role = default!;
+    private string Initial = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            UserName = user.Identity.Name ?? string.Empty;
+
+            Role = user.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            Initial = UserName.Substring(0, 1).ToUpper();
+        }
+    }
+
+}

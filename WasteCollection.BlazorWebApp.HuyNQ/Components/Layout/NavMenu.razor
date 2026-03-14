@@ -1,24 +1,168 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">WasteCollection.BlazorWebApp.HuyNQ</a>
+@using Microsoft.AspNetCore.Components.Authorization
+<div class="d-flex flex-column h-100 sidebar">
+    
+    <div class="p-4 pt-5 pb-4 text-center border-bottom">
+        <a class="navbar-brand fw-bold mb-0 d-flex flex-column align-items-center text-decoration-none" href="">
+            <div class="logo-circle mb-3">
+                <span class="bi bi-recycle fs-2 text-white"></span>
+            </div>
+
+            <span class="brand-title">Smart Waste</span>
+
+            <span class="badge badge-platform">
+                PLATFORM Core
+            </span>
+        </a>
     </div>
+
+    <div class="nav-scrollable flex-grow-1 p-3">
+
+        <div class="menu-title">Main Menu</div>
+
+        <nav class="nav flex-column gap-1">
+
+            <NavLink class="nav-link-custom" href="/" Match="NavLinkMatch.All">
+                <span class="bi bi-grid-1x2 nav-icon"></span>
+                Home
+            </NavLink>
+
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink class="nav-link-custom" href="/collectorassignmentshuynqs">
+                        <span class="bi bi-list-check nav-icon"></span>
+                        Assignments
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
+           
+        </nav>
+
+        <div class="menu-title mt-4">Settings</div>
+
+        <nav class="nav flex-column gap-1">
+
+            <a class="nav-link-custom" href="#">
+                <span class="bi bi-gear nav-icon"></span>
+                Preferences
+            </a>
+
+            <AuthorizeView>
+                <Authorized>
+                    <a class="nav-link-custom" href="/logout">
+                        <span class="bi bi-box-arrow-right nav-icon"></span>
+                        Log Out
+                    </a>
+                </Authorized>
+            
+
+                <NotAuthorized>
+                    <a class="nav-link-custom" href="/login">
+                        <span class="bi bi-box-arrow-right nav-icon"></span>
+                        Log In
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+
+    <div class="p-3 text-center border-top footer">
+        © 2026 Smart Waste Inc.
+    </div>
+
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<style>
+    .sidebar {
+        background: #ffffff;
+    }
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    /* logo */
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/collectorassignmentshuynqs" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Collector Assignments
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    .logo-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg,#10b981,#0ea5e9);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
 
+    .brand-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
+
+    .badge-platform {
+        background: #d1fae5;
+        color: #047857;
+        font-size: 0.7rem;
+        margin-top: 6px;
+    }
+
+    /* menu section */
+
+    .menu-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-left: 8px;
+        margin-bottom: 10px;
+    }
+
+    /* nav */
+
+    .nav-link-custom {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        color: #334155;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .nav-icon {
+        font-size: 1.1rem;
+        color: #475569;
+    }
+
+    /* hover */
+
+    .nav-link-custom:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        transform: translateX(3px);
+    }
+
+        .nav-link-custom:hover .nav-icon {
+            color: #10b981;
+        }
+
+    /* active */
+
+    .nav-link-custom.active {
+        background: #ecfdf5;
+        color: #047857;
+        font-weight: 600;
+    }
+
+        .nav-link-custom.active .nav-icon {
+            color: #10b981;
+        }
+
+    /* footer */
+
+    .footer {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+</style>
